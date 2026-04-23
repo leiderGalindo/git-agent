@@ -53,6 +53,69 @@ Before generating a commit message, the agent should:
 
 ---
 
+## Prompt de generación de commit
+
+Cuando generes el mensaje de commit, sigue este razonamiento interno antes de mostrar la sugerencia:
+
+### Paso A — Clasificar el tipo de cambio
+Analizar `git diff --cached` y determinar el tipo:
+- Archivos nuevos con funcionalidad → `feat`
+- Corrección de lógica incorrecta → `fix`
+- Solo archivos de documentación (`.md`, `.txt`) → `docs`
+- Archivos de configuración o dependencias (`package.json`, `.env`, `config/`) → `chore`
+- Archivos de prueba (`*.test.*`, `*.spec.*`, `__tests__/`) → `test`
+- Archivos de CI/CD (`.github/`, `Dockerfile`, `.gitlab-ci.yml`) → `ci`
+- Restructuración sin cambio de funcionalidad → `refactor`
+- Cambios de formato sin lógica → `style`
+- Corrección urgente para producción → `hotfix`
+- Mejoras de rendimiento → `perf`
+
+### Paso B — Determinar el scope
+Revisar las rutas de los archivos cambiados:
+- Si todos pertenecen a una carpeta o módulo común → ese módulo es el scope
+  Ejemplos: `src/auth/` → `auth`, `components/Button` → `ui`, `api/users` → `users`
+- Si los cambios son transversales (múltiples módulos sin relación clara) → omitir el scope
+- Si es un proyecto pequeño sin estructura de módulos → omitir el scope
+
+### Paso C — Redactar la descripción
+Reglas:
+1. Verbo en imperativo en inglés: "add", "fix", "update", "remove", "extract", "prevent"
+2. Describir el QUÉ, no el CÓMO: "add email validation" no "add regex check to email field"
+3. Máximo 60 caracteres (por debajo del límite de 72)
+4. Sin punto al final
+5. Si hay cambios que rompen compatibilidad → agregar `!`: `feat!: change API response format`
+
+### Paso D — Evaluar si necesita cuerpo
+Agregar cuerpo solo si los cambios no son evidentes por sí solos:
+- Por qué se hizo el cambio (contexto o limitación encontrada)
+- Qué alternativas se descartaron (si es relevante)
+Separar del subject con una línea en blanco.
+
+### Ejemplos del razonamiento aplicado
+
+**Ejemplo 1:**
+Cambios: se agregó `src/auth/validators.js` con funciones de validación de email y contraseña
+→ Tipo: `feat` (funcionalidad nueva)
+→ Scope: `auth` (carpeta src/auth/)
+→ Descripción: "add input validators for email and password"
+→ Resultado: `feat(auth): add input validators for email and password`
+
+**Ejemplo 2:**
+Cambios: se modificó `src/cart/CartItem.jsx` corrigiendo que los items se duplicaban al recargar
+→ Tipo: `fix` (corrección de error)
+→ Scope: `cart` (carpeta src/cart/)
+→ Descripción: "prevent item duplication on page reload"
+→ Resultado: `fix(cart): prevent item duplication on page reload`
+
+**Ejemplo 3:**
+Cambios: se actualizaron `README.md` y `docs/api.md`
+→ Tipo: `docs` (solo documentación)
+→ Scope: omitir (múltiples docs sin módulo claro)
+→ Descripción: "update API documentation and README"
+→ Resultado: `docs: update API documentation and README`
+
+---
+
 ## Examples
 
 ```

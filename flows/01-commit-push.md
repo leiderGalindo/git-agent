@@ -26,6 +26,22 @@ git diff --stat
 - ➕ Nuevos: [lista]
 - 🗑️ Eliminados: [lista]"
 
+**Si hay archivos eliminados (🗑️):**
+→ Preguntar antes de continuar:
+"Veo que se eliminaron estos archivos: [lista]. ¿Fue intencional o fue un accidente?"
+- Si fue **accidental** → `git checkout -- <archivo>` para cada uno, con mensaje: "Restauré [archivo] como estaba antes."
+- Si fue **intencional** → continuar normalmente.
+
+**Verificación de archivos sensibles:**
+→ Revisar si algún archivo nuevo o modificado podría ser sensible.
+  Patrones de riesgo: `.env`, `*.env`, `.env.*`, `*.key`, `*.pem`, `*.p12`, archivos con `credentials`, `secrets` o `token` en el nombre.
+
+Si detecta alguno → Alertar:
+"⚠️ Detecté un archivo que podría contener información sensible: `[archivo]`.
+Generalmente estos archivos no deben subirse al repositorio. ¿Lo incluimos de todas formas?"
+- Si confirma incluirlo → continuar
+- Si no → `git rm --cached <archivo>` para excluirlo, y preguntar si desea agregarlo al `.gitignore`
+
 ---
 
 ### PASO 2 — Validar la rama actual
@@ -34,16 +50,23 @@ git branch --show-current
 ```
 
 ⚠️ **Si la rama actual es `main` o `master`:**
-→ Alertar al usuario: "⚠️ Estás en la rama `main`. Normalmente no se sube directamente a esta rama. ¿Estás seguro de que quieres continuar aquí?"
-→ Esperar confirmación antes de continuar.
+→ Alertar al usuario:
+"⚠️ Estás en la rama `main`. Normalmente no se trabaja directamente aquí.
+
+¿Qué prefieres hacer?
+1. 🌿 Crear una rama nueva para estos cambios (recomendado)
+2. ⚠️ Continuar en `main` de todas formas (confirmar)"
+
+- Si elige **opción 1** → Ejecutar Flujo 03 para crear la rama → continuar este flujo desde PASO 3
+- Si elige **opción 2** → Esperar confirmación explícita → continuar al PASO 3
 
 ---
 
 ### PASO 3 — Generar mensaje de commit
-1. Ejecutar `git diff` para analizar los cambios
-2. Leer `templates/commit-rules.md` para aplicar el estándar
-3. Verificar si existe `.commitlintrc` o `commitlint.config.js` en el proyecto
-4. Generar un mensaje de commit siguiendo Conventional Commits en **inglés**
+1. Ejecutar `git diff --cached --stat` y `git diff --cached` para ver exactamente qué está staged
+2. Si nada está staged aún, ejecutar `git diff --stat` para ver cambios sin stagear
+3. Aplicar el razonamiento de los **4 pasos** definidos en `templates/commit-rules.md` → sección "Prompt de generación"
+4. Verificar si existe `.commitlintrc` o `commitlint.config.js` — si existe, leerlo y ajustar el resultado
 
 → Mostrar al usuario:
 "Generé este mensaje de commit:
@@ -100,15 +123,19 @@ git push --set-upstream origin <rama-actual>
 ## Diagrama de decisión
 
 ```
-¿Hay cambios? 
+¿Hay cambios?
   NO → Avisar y terminar
-  SÍ → ¿Estás en main?
-         SÍ → ⚠️ Advertir y pedir confirmación
-         NO → Continuar
-              → Generar commit message → Confirmar con usuario
-              → git add + git commit
-              → ¿Hacer push? (CONFIRMAR)
-                SÍ → git push
-                     → ¿Crear PR?
-                NO → Fin
+  SÍ → ¿Hay archivos eliminados? → Preguntar si fue intencional
+       ¿Hay archivos sensibles? → Alertar y confirmar
+       → ¿Estás en main?
+           SÍ → ¿Crear rama nueva o continuar en main?
+                Crear rama → Flujo 03 → continuar
+                Continuar → Confirmar explícitamente
+           NO → Continuar
+                → Generar commit message (4 pasos) → Confirmar con usuario
+                → git add + git commit
+                → ¿Hacer push? (CONFIRMAR)
+                  SÍ → git push
+                       → ¿Crear PR?
+                  NO → Fin
 ```

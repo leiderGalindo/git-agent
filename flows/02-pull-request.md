@@ -131,7 +131,7 @@ Se implementó la validación del formulario de login para...
 
 ### PASO 8 — Crear el PR
 
-**GitHub (usando gh CLI):**
+**GitHub con `gh` CLI disponible** (`gh_cli_available: true` en config):
 ```bash
 gh pr create \
   --title "<título>" \
@@ -139,14 +139,52 @@ gh pr create \
   --base <rama-base> \
   --head <rama-actual>
 ```
+→ Mostrar: "✅ PR creado exitosamente. Puedes verlo aquí: [link que devuelve gh]"
 
-**Bitbucket / GitLab sin CLI:**
-→ Generar el cuerpo del PR en markdown listo para copiar y pegar.
-→ Proporcionar el link directo para crear el PR:
-  - Bitbucket: `https://bitbucket.org/<workspace>/<repo>/pull-requests/new?source=<rama>`
-  - GitLab: `https://gitlab.com/<namespace>/<repo>/-/merge_requests/new?merge_request[source_branch]=<rama>`
+---
 
-→ Mostrar: "✅ PR creado exitosamente. Puedes verlo aquí: [link]"
+**GitHub sin `gh` CLI** (`gh_cli_available: false`):
+→ Notificar:
+"No tengo la herramienta `gh` instalada, así que no puedo crear el PR directamente.
+Te doy todo para crearlo en menos de un minuto:"
+
+1. Abre este link:
+   `https://github.com/<owner>/<repo>/compare/<rama-base>...<rama-actual>`
+
+2. Pega este título: `<título>`
+
+3. Pega esta descripción:
+   `<cuerpo completo en markdown>`
+
+→ Preguntar: "¿Quieres que te muestre cómo instalar `gh` para automatizar esto en el futuro?"
+- Si sí → mostrar instrucciones según sistema operativo:
+  - macOS: `brew install gh`
+  - Linux (apt): `sudo apt install gh`
+  - Windows: `winget install GitHub.cli`
+  - Nota: "Después de instalarlo, el agente lo detectará automáticamente en la próxima sesión."
+
+---
+
+**Bitbucket / GitLab:**
+→ Construir URL con ramas pre-cargadas:
+  - Bitbucket: `https://bitbucket.org/<workspace>/<repo>/pull-requests/new?source=<rama-actual>&dest=<rama-base>`
+  - GitLab: `https://gitlab.com/<namespace>/<repo>/-/merge_requests/new?merge_request[source_branch]=<rama-actual>&merge_request[target_branch]=<rama-base>`
+
+→ Intentar abrir el navegador automáticamente:
+```bash
+# macOS:
+open "<url>"
+# Linux:
+xdg-open "<url>"
+# Windows:
+start "<url>"
+```
+
+→ Mostrar al usuario:
+"Intenté abrir el navegador en la página de creación del PR con tu rama ya seleccionada.
+Si no se abrió automáticamente, usa este link: [url]"
+
+→ Mostrar el cuerpo del PR en markdown formateado, listo para copiar y pegar en el campo de descripción.
 
 ---
 

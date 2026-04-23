@@ -22,7 +22,7 @@ Diseñado para equipos con perfiles mixtos: funciona igual para desarrolladores 
 - ✅ Crear ramas siguiendo GitFlow
 - ✅ Cambiar entre ramas con verificación de seguridad
 - ✅ Actualizar rama con cambios del servidor (pull)
-- ✅ Manejo de conflictos con notificación al equipo
+- ✅ Resolución guiada de conflictos con opciones interactivas
 - ✅ Auto-detección de plataforma (GitHub / Bitbucket)
 - ✅ Compatible con cualquier proyecto
 
@@ -45,7 +45,8 @@ git-agent/
 │   ├── 02-pull-request.md    ← Crear / actualizar PR
 │   ├── 03-branch-create.md   ← Crear nueva rama
 │   ├── 04-branch-switch.md   ← Cambiar de rama
-│   └── 05-pull-update.md     ← Pull y manejo de conflictos
+│   ├── 05-pull-update.md     ← Pull y manejo de conflictos
+│   └── 06-edge-cases.md      ← Casos especiales y situaciones de borde
 └── templates/
     ├── commit-rules.md       ← Conventional Commits en inglés (default)
     └── pr-template.md        ← Estructura de PR en español (default)
@@ -70,9 +71,9 @@ Si el usuario trabaja en múltiples proyectos, cada uno tiene su propia configur
 
 | Plataforma | Soporte |
 |---|---|
-| GitHub | ✅ Completo (incluye gh CLI si está instalado) |
-| Bitbucket | ✅ Completo (genera link directo para crear PR) |
-| GitLab | ⚠️ Parcial (genera link directo para crear PR) |
+| GitHub | ✅ Completo (gh CLI si disponible, fallback con link si no) |
+| Bitbucket | ✅ Completo (abre navegador con link pre-configurado) |
+| GitLab | ⚠️ Parcial (abre navegador con link pre-configurado) |
 
 | Estrategia de ramas | Soporte |
 |---|---|
