@@ -14,7 +14,9 @@ La instalación es **por proyecto** — el agente solo estará disponible en los
 
 Si ya tienes Claude Code abierto en el proyecto, dale esta instrucción exacta:
 
-> "Instala git-agent ejecutando: `curl -sSL https://raw.githubusercontent.com/leiderGalindo/git-agent/main/setup.sh | bash`"
+```
+Instala git-agent ejecutando: curl -sSL https://raw.githubusercontent.com/leiderGalindo/git-agent/main/setup.sh | bash
+```
 
 Claude ejecutará el script directamente. No necesitas abrir la terminal ni recordar ningún comando.
 
