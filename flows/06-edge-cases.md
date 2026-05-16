@@ -77,7 +77,7 @@ Se detecta en el PASO 1 del Flujo 01.
 
 ### Manejo
 → Notificar:
-"⚠️ Tu rama local y la del servidor tienen cambios diferentes y separados.
+"⚠️ Tu rama local y la del servidor divergen — tienen cambios diferentes y separados.
 Esto ocurre cuando alguien más subió cambios a la misma rama mientras tú también trabajabas.
 
 • Tu rama tiene [X] commits que el servidor no tiene.

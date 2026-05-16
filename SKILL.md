@@ -15,6 +15,9 @@ description: >
 Asistente de control de versiones que convierte lenguaje natural en operaciones Git seguras y guiadas.
 Diseñado para equipos con perfiles mixtos: funciona igual para desarrolladores experimentados y usuarios sin conocimiento técnico de Git.
 
+> **Nota:** El agente principal está definido en `.claude/agents/git-agent.md`.
+> Para instalar en un proyecto nuevo, consulta el README o usa `install-git-agent.md`.
+
 ## Capacidades
 
 - ✅ Guardar y subir cambios (add + commit + push)
@@ -26,46 +29,34 @@ Diseñado para equipos con perfiles mixtos: funciona igual para desarrolladores 
 - ✅ Auto-detección de plataforma (GitHub / Bitbucket)
 - ✅ Compatible con cualquier proyecto
 
-## Inicio rápido
-
-Al activarse, el agente:
-1. Detecta automáticamente el estado del repositorio y la plataforma
-2. Lee la configuración del proyecto (si existe)
-3. Identifica la intención del usuario
-4. Ejecuta el flujo correspondiente con confirmación en pasos críticos
-
-## Archivos del agente
+## Estructura del agente
 
 ```
 git-agent/
-├── SKILL.md                  ← Este archivo (punto de entrada)
-├── agent.md                  ← Cerebro: comportamiento, reglas, tabla de intenciones
+├── .claude/agents/git-agent.md   ← Subagente consolidado (punto de entrada principal)
+├── install-git-agent.md          ← Skill de instalación por proyecto
+├── SKILL.md                      ← Este archivo (entrada legacy / slash command)
+├── agent.md                      ← Fuente: comportamiento y reglas
 ├── flows/
-│   ├── 01-commit-push.md     ← add + commit + push
-│   ├── 02-pull-request.md    ← Crear / actualizar PR
-│   ├── 03-branch-create.md   ← Crear nueva rama
-│   ├── 04-branch-switch.md   ← Cambiar de rama
-│   ├── 05-pull-update.md     ← Pull y manejo de conflictos
-│   └── 06-edge-cases.md      ← Casos especiales y situaciones de borde
-└── templates/
-    ├── commit-rules.md       ← Conventional Commits en inglés (default)
-    └── pr-template.md        ← Estructura de PR en español (default)
+│   ├── 01-commit-push.md         ← Fuente: add + commit + push
+│   ├── 02-pull-request.md        ← Fuente: Pull Request
+│   ├── 03-branch-create.md       ← Fuente: crear rama
+│   ├── 04-branch-switch.md       ← Fuente: cambiar rama
+│   ├── 05-pull-update.md         ← Fuente: pull y conflictos
+│   └── 06-edge-cases.md          ← Fuente: casos especiales
+├── templates/
+│   ├── commit-rules.md           ← Fuente: Conventional Commits
+│   └── pr-template.md            ← Fuente: plantilla de PR
+└── scripts/
+    └── build.py                  ← Genera .claude/agents/git-agent.md
 ```
 
 ## Instrucciones para Claude
 
-1. **Lee `agent.md`** — contiene las reglas de comportamiento, tabla de intenciones y manejo de errores.
-2. **Identifica la intención del usuario** usando la tabla de intenciones en `agent.md`.
-3. **Lee el flujo correspondiente** en `flows/` y síguelo paso a paso.
-4. **Consulta las plantillas** en `templates/` cuando el flujo lo indique.
-5. **Detecta y respeta** las convenciones del proyecto antes que las plantillas por defecto.
-
-## Configuración por proyecto
-
-El agente guarda la configuración detectada en `.git-agent-config.json` en la raíz del proyecto.
-Esto evita preguntar las mismas cosas en cada sesión.
-
-Si el usuario trabaja en múltiples proyectos, cada uno tiene su propia configuración independiente.
+1. **Lee `.claude/agents/git-agent.md`** — contiene el comportamiento completo del agente.
+2. **Identifica la intención del usuario** usando la tabla de intenciones en ese archivo.
+3. **Ejecuta el flujo correspondiente** siguiendo los pasos definidos.
+4. **Detecta y respeta** las convenciones del proyecto antes que las plantillas por defecto.
 
 ## Compatibilidad
 

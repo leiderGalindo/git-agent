@@ -28,16 +28,21 @@ MODEL = "claude-sonnet-4-6"
 MAX_TOKENS = 2000
 AGENT_ROOT = Path(__file__).parent.parent
 
-# Archivos que conforman el system prompt del agente (orden importa)
-AGENT_FILES = [
-    "SKILL.md",
-    "agent.md",
+# Agente ligero — el mismo que se instala en .claude/agents/ del proyecto usuario
+AGENT_FILE = ".claude/agents/git-agent.md"
+
+# Flujos y plantillas que Claude lee bajo demanda con Read en producción.
+# En los tests se precargan junto al agente para validar respuestas sin
+# necesitar ejecutar la herramienta Read durante el test.
+FLOW_FILES = [
     "flows/01-commit-push.md",
     "flows/02-pull-request.md",
     "flows/03-branch-create.md",
     "flows/04-branch-switch.md",
     "flows/05-pull-update.md",
     "flows/06-edge-cases.md",
+]
+TEMPLATE_FILES = [
     "templates/commit-rules.md",
     "templates/pr-template.md",
 ]
@@ -476,16 +481,46 @@ TESTS: list[TestCase] = [
 # Carga del system prompt
 # ---------------------------------------------------------------------------
 
+def _strip_frontmatter(content: str) -> str:
+    if content.startswith("---"):
+        end = content.index("---", 3)
+        return content[end + 3:].lstrip("\n")
+    return content
+
+
 def load_system_prompt() -> str:
-    parts = []
-    for relative_path in AGENT_FILES:
+    agent_path = AGENT_ROOT / AGENT_FILE
+    if not agent_path.exists():
+        print(f"{RED}Error: agente no encontrado. Ejecuta: python scripts/build.py{RESET}")
+        sys.exit(1)
+
+    # Agente ligero (reglas de comportamiento + tabla de rutas)
+    agent_content = _strip_frontmatter(agent_path.read_text(encoding="utf-8"))
+
+    # Flujos y plantillas precargados — simulan los Read que Claude haría en producción
+    flow_parts = []
+    missing = []
+    for relative_path in FLOW_FILES + TEMPLATE_FILES:
         full_path = AGENT_ROOT / relative_path
         if full_path.exists():
             content = full_path.read_text(encoding="utf-8")
-            parts.append(f"# === {relative_path} ===\n\n{content}")
+            flow_parts.append(f"<!-- Contenido de {relative_path} -->\n\n{content}")
         else:
-            print(f"{YELLOW}⚠ Archivo no encontrado: {relative_path}{RESET}")
-    return "\n\n---\n\n".join(parts)
+            missing.append(relative_path)
+
+    if missing:
+        for m in missing:
+            print(f"{YELLOW}⚠ Archivo no encontrado: {m}{RESET}")
+
+    flows_block = "\n\n---\n\n".join(flow_parts)
+
+    total = agent_content + "\n\n---\n\n" + flows_block
+
+    loaded = len(FLOW_FILES) + len(TEMPLATE_FILES) - len(missing)
+    print(f"  Agente: {AGENT_FILE} {CYAN}(ligero — {len(agent_content):,} chars){RESET}")
+    print(f"  Flujos y plantillas precargados: {loaded}/{len(FLOW_FILES) + len(TEMPLATE_FILES)} archivos")
+
+    return total
 
 
 # ---------------------------------------------------------------------------
@@ -584,7 +619,7 @@ def main() -> None:
 
     print(f"\n{BOLD}Cargando system prompt del agente...{RESET}")
     system_prompt = load_system_prompt()
-    print(f"  {len(system_prompt):,} caracteres en {len(AGENT_FILES)} archivos\n")
+    print(f"  {len(system_prompt):,} caracteres · {system_prompt.count(chr(10)):,} líneas\n")
 
     selected_tests = TESTS
     if args.test:
