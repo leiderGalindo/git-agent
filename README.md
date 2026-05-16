@@ -10,7 +10,15 @@ Diseñado para equipos con perfiles mixtos: funciona igual para desarrolladores 
 
 La instalación es **por proyecto** — el agente solo estará disponible en los proyectos donde lo instales.
 
-### Opción 1 — Con skill de instalación (recomendado)
+### Opción 1 — Dile a Claude (sin comandos)
+
+Si ya tienes Claude Code abierto en el proyecto, dale esta instrucción exacta:
+
+> "Instala git-agent ejecutando: `curl -sSL https://raw.githubusercontent.com/leiderGalindo/git-agent/main/setup.sh | bash`"
+
+Claude ejecutará el script directamente. No necesitas abrir la terminal ni recordar ningún comando.
+
+### Opción 2 — Con skill de instalación
 
 **Paso 1:** Descarga el skill de instalación en el proyecto donde quieres usar git-agent:
 
@@ -27,22 +35,13 @@ curl -sSL https://raw.githubusercontent.com/leiderGalindo/git-agent/main/install
 Claude descargará y configurará todo automáticamente (agente + 6 flujos + 2 plantillas).
 Al terminar, te preguntará si conservar el skill de instalación para futuras actualizaciones.
 
-### Opción 2 — Instalación directa (para usuarios técnicos)
+### Opción 3 — One-liner (para usuarios técnicos)
 
 ```bash
-BASE="https://raw.githubusercontent.com/leiderGalindo/git-agent/main"
-mkdir -p .claude/agents .claude/git-agent/flows .claude/git-agent/templates
-
-curl -sSL "$BASE/.claude/agents/git-agent.md"   -o .claude/agents/git-agent.md
-curl -sSL "$BASE/flows/01-commit-push.md"        -o .claude/git-agent/flows/01-commit-push.md
-curl -sSL "$BASE/flows/02-pull-request.md"       -o .claude/git-agent/flows/02-pull-request.md
-curl -sSL "$BASE/flows/03-branch-create.md"      -o .claude/git-agent/flows/03-branch-create.md
-curl -sSL "$BASE/flows/04-branch-switch.md"      -o .claude/git-agent/flows/04-branch-switch.md
-curl -sSL "$BASE/flows/05-pull-update.md"        -o .claude/git-agent/flows/05-pull-update.md
-curl -sSL "$BASE/flows/06-edge-cases.md"         -o .claude/git-agent/flows/06-edge-cases.md
-curl -sSL "$BASE/templates/commit-rules.md"      -o .claude/git-agent/templates/commit-rules.md
-curl -sSL "$BASE/templates/pr-template.md"       -o .claude/git-agent/templates/pr-template.md
+curl -sSL https://raw.githubusercontent.com/leiderGalindo/git-agent/main/setup.sh | bash
 ```
+
+Descarga e instala todo en un solo comando (agente + 6 flujos + 2 plantillas).
 
 ### Para desarrolladores del agente
 

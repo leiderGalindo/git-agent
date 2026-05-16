@@ -34,6 +34,7 @@ Los flujos se leen bajo demanda, reduciendo el uso del contexto un 77%.
 | `templates/*.md` | Plantillas de commits y PRs | ✅ Sí |
 | `.claude/agents/git-agent.md` | Agente ligero (generado por build.py) | ❌ No |
 | `install-git-agent.md` | Skill de instalación por proyecto | ✅ Sí (si cambia URL o estructura) |
+| `setup.sh` | Instalador one-liner para terminal | ✅ Sí (si cambia URL o estructura) |
 | `scripts/build.py` | Genera el agente ligero | ✅ Sí (si cambia la estructura) |
 | `tests/run_tests.py` | Suite de pruebas automatizadas | ✅ Sí (para nuevos tests) |
 
@@ -70,13 +71,15 @@ Los flujos se leen bajo demanda, reduciendo el uso del contexto un 77%.
 
 3. Agrega la ruta en `scripts/build.py` → lista `SOURCES["flows"]`
 
-4. Agrega la ruta en `tests/run_tests.py` → lista `FLOW_FILES`
+4. Agrega la ruta en `install-git-agent.md` → sección PASO 3
 
-5. Agrega la ruta en `install-git-agent.md` → sección PASO 3
+5. Agrega la ruta en `setup.sh` → bloque de descargas de flujos
 
-6. Escribe test cases en `tests/run_tests.py`
+6. Agrega la ruta en `tests/run_tests.py` → lista `FLOW_FILES`
 
-7. Regenera y valida:
+7. Escribe test cases en `tests/run_tests.py`
+
+8. Regenera y valida:
    ```bash
    python scripts/build.py
    python tests/run_tests.py
@@ -102,4 +105,14 @@ https://raw.githubusercontent.com/leiderGalindo/git-agent/main/
 
 Si el repo cambia de ubicación, actualizar esta URL en:
 - `install-git-agent.md` (PASO 3, variable `BASE`)
+- `setup.sh` (variable `BASE`)
 - `README.md` (sección Instalación)
+
+## Métodos de distribución
+
+| Método | Archivo | Para quién |
+|---|---|---|
+| Skill de instalación | `install-git-agent.md` → descarga a `.claude/agents/` del proyecto | Usuarios que prefieren que Claude guíe la instalación |
+| One-liner | `setup.sh` vía `curl \| bash` | Usuarios técnicos con terminal |
+| Dile a Claude | README Opción 3 — instrucción exacta para Claude | Usuarios con Claude Code ya abierto |
+| Manual | README instalación directa (collapsible) | Usuarios con restricciones de seguridad en `curl \| bash` |
